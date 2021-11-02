@@ -155,6 +155,7 @@ WHERE FEVEREIRO > (SELECT TRUNCATE(AVG(FEVEREIRO),2) FROM VENDEDORES);
 
  /* QUEM VENDEU MENOS DO QUE O VALOR MEDIO DE MARÇO */
 
+
 SELECT TRUNCATE(AVG(MARCO),2) FROM VENDEDORES;
 
  +------------------------+
@@ -165,3 +166,37 @@ SELECT TRUNCATE(AVG(MARCO),2) FROM VENDEDORES;
 
 SELECT NOME, MARCO AS "MARÇO" FROM VENDEDORES
 WHERE MARCO < (SELECT TRUNCATE(AVG(MARCO),2) FROM VENDEDORES);
+
+
+/* Operações em linhas */
+
+SELECT NOME,
+			 JANEIRO,
+			 FEVEREIRO, 
+			 MARCO,
+			 (JANEIRO+FEVEREIRO+MARCO) AS "TOTAL",
+			 TRUNCATE((JANEIRO+FEVEREIRO+MARCO)/3,2) AS "MEDIA"
+			 FROM VENDEDORES;
+
++----------+-----------+-----------+-----------+------------+-----------+
+| NOME     | JANEIRO   | FEVEREIRO | MARCO     | TOTAL      | MEDIA     |
++----------+-----------+-----------+-----------+------------+-----------+
+| CARLOS   |  76234.78 |  88346.87 |   5756.90 |  170338.55 |  56779.51 |
+| MARIA    |   5865.78 |   6768.87 |   4467.90 |   17102.55 |   5700.84 |
+| ANTONIO  |  78769.78 |   6685.87 |   6664.90 |   92120.55 |  30706.85 |
+| CLARA    |   5779.78 | 446886.88 |   8965.90 |  461632.56 | 153877.51 |
+| ANDERSON | 676545.75 |  77544.87 | 578665.88 | 1332756.49 | 444252.16 |
+| IVONE    |  57789.78 |  44774.87 |  68665.90 |  171230.55 |  57076.85 |
+| JOAO     |   4785.78 |  66478.87 |   6887.90 |   78152.55 |  26050.84 |
+| CELIA    |  89667.78 |  57654.87 |   5755.90 |  153078.55 |  51026.18 |
++----------+-----------+-----------+-----------+------------+-----------+
+
+SELECT NOME,
+			 JANEIRO, 
+			 FEVEREIRO, 
+			 MARCO, 
+			 (JANEIRO+FEVEREIRO+MARCO) AS "TOTAL",
+			 (JANEIRO+FEVEREIRO+MARCO) * 0.75 AS "DESCONTO"
+			 FROM VENDEDORES
+			 ORDER BY JANEIRO, FEVEREIRO, MARCO;
+			 
