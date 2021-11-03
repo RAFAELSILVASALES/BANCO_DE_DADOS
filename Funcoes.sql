@@ -168,7 +168,7 @@ SELECT NOME, MARCO AS "MARÇO" FROM VENDEDORES
 WHERE MARCO < (SELECT TRUNCATE(AVG(MARCO),2) FROM VENDEDORES);
 
 
-/* Operações em linhas */
+ /* Operações em linhas */
 
 SELECT NOME,
 			 JANEIRO,
