@@ -99,6 +99,25 @@ INSERT INTO CARRO VALUES(NULL,' Voyage', 'HEH-7396');
 INSERT INTO CARRO VALUES(NULL,'Corsa Sedan ', 'NEG-6127');
 INSERT INTO CARRO VALUES(NULL,'Onix ', 'ICV-7163');
 
+DELIMITER $
+STATUS
+
+CREATE PROCEDURE CARRO (P_MODELO VARCHAR(40),
+											  P_PLACA VARCHAR(30))
+				
+BEGIN 
+ 
+			INSERT INTO CARRO VALUES(NULL, P_MODELO, P_PLACA);
+END 
+$
+
+DELIMITER ;
+
+STATUS 
+
+CALL CARRO('HB20', 'HOY-5412');
+
+SELECT IDCARRO, MODELO, PLACA FROM CARRO;
 
 /* TABELA DE BACKUP */
 
@@ -149,13 +168,48 @@ SELECT IDCARRO, MODELO, PLACA FROM CARRO;
 |      11 | Onix         | HAP-2254 |
 +---------+--------------+----------+
 
+INSERT INTO CARRO VALUES(NULL, 'Onix','HAP-2254');
 
 SELECT IDBACKUP, IDCARRO, MODELO, PLACA FROM BACKUP_CARRO;
 
-/* UPDATE */
+
++----------+---------+--------+----------+
+| IDBACKUP | IDCARRO | MODELO | PLACA    |
++----------+---------+--------+----------+
+|        1 |      11 | Onix   | HAP-2254 |
++----------+---------+--------+----------+
+
+
+/* TRIGGER UPDATE */
+
+
+CREATE TABLE BACKUP_CARRO_UPDATE(
+	IDBACKUP INT PRIMARY KEY AUTO_INCREMENT,
+	IDCARRO INT,
+  MODELO VARCHAR(40) NOT NULL,
+  PLACA VARCHAR(30) NOT NULL UNIQUE
+
+);
+
+DELIMITER $
+STATUS
+
+CREATE TRIGGER BACKUP_CARRO_UPDATE
+BEFORE UPDATE ON CARRO 
+FOR EACH ROW 
+
+BEGIN 
+				INSERT INTO BACKUP_CARRO_UPDATE VALUES(NULL, OLD.IDCARRO,
+																										 OLD.MODELO, 
+																										 OLD.PLACA);
+
+END
+$
+
+DELIMITER ;
 
 SELECT IDCARRO, MODELO, PLACA FROM CARRO
-WHERE IDCARRO = 10;
+WHERE IDCARRO = '10';
 
 +---------+--------+----------+
 | IDCARRO | MODELO | PLACA    |
@@ -164,6 +218,22 @@ WHERE IDCARRO = 10;
 +---------+--------+----------+
 
 
-INSERT INTO CARRO VALUES(NULL, 'Onix','HAP-2254');
+UPDATE CARRO 
+SET PLACA ='GYE-7565'
+WHERE IDCARRO = 10;
+
++---------+--------+----------+
+| IDCARRO | MODELO | PLACA    |
++---------+--------+----------+
+|      10 | Onix   | GYE-7565 |
++---------+--------+----------+
+
+SELECT IDBACKUP, IDCARRO, MODELO, PLACA FROM BACKUP_CARRO_UPDATE;
+
++----------+---------+--------+----------+
+| IDBACKUP | IDCARRO | MODELO | PLACA    |
++----------+---------+--------+----------+
+|        1 |      10 | Onix   | ICV-7163 |
++----------+---------+--------+----------+
 
 
