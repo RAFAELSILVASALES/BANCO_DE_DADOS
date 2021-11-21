@@ -1,0 +1,82 @@
+CREATE DATABASE LOJA;
+
+USE LOJA;
+
+CREATE TABLE PRODUTO(
+  IDPRODUTO INT PRIMARY KEY AUTO_INCREMENT,
+  NOME VARCHAR(30) NOT NULL,
+  VALOR FLOAT(10,2)
+);
+
+
+CREATE DATABASE BACKUP_LOJA;
+
+USE BACKUP_LOJA;
+
+CREATE TABLE BACKUP_PRODUTO(
+  IDBACUKP INT PRIMARY KEY AUTO_INCREMENT,
+  IDPRODUTO INT,
+  NOME VARCHAR(30) NOT NULL,
+  VALOR FLOAT(10,2),
+  EVENTO CHAR(6)
+);
+
+
+ALTER TABLE BACKUP_PRODUTO
+CHANGE IDBACUKP  IDBACKUP INT;
+
+USE LOJA;
+
+/* TRIGGER */
+DELIMITER $
+
+STATUS
+
+
+/* TRIIGER CRIADA NO BANCO LOJA */
+
+CREATE TRIGGER BACKUP
+AFTER INSERT ON PRODUTO 
+FOR EACH ROW 
+
+BEGIN 
+        INSERT INTO BACKUP_LOJA.BACKUP_PRODUTO VALUES(NULL, NEW.IDPRODUTO, 
+                                                       NEW.NOME,
+                                                       NEW.VALOR,'INSERT');
+
+END 
+$
+/* /* A 41 - COMUNICAÇÃO ENTRE BANCOS */
+-- INSERT INTO BACKUP.BACKUP_PRODUTO
+-- COLOCAR O NOME DO BANCO E UM PONTO 
+-- DEPOIS O NOME DA TABELA 
+-- RESULTADO BACKUP.BACKUP_PRODUTO
+
+DELIMITER ;
+
+INSERT INTO PRODUTO VALUES(NULL,'LIVRO PYTHON', '300.00');
+INSERT INTO PRODUTO VALUES(NULL, 'LIVRO  SQL', '450.00');
+
+
+/* SELECT NO BANCO DE DADOS QUE CORRESPONDE O BACKUP */
+-- COMANDO EXECUTADO NO BANCO LOJA. 
+-- USANDO COMUNICAÇÃO ENTRE BANCOS 
+SELECT IDBACKUP, IDPRODUTO, NOME, VALOR, EVENTO FROM BACKUP_LOJA.BACKUP_PRODUTO;
+
++----------+-----------+--------------+--------+--------+
+| IDBACKUP | IDPRODUTO | NOME         | VALOR  | EVENTO |
++----------+-----------+--------------+--------+--------+
+|        1 |         1 | LIVRO PYTHON | 300.00 | INSERT |
+|        2 |         2 | LIVRO  SQL   | 450.00 | INSERT |
++----------+-----------+--------------+--------+--------+
+
+USE BACKUP_LOJA;
+
+SELECT IDBACKUP, IDPRODUTO, NOME, VALOR, EVENTO FROM BACKUP_PRODUTO;
+
++----------+-----------+--------------+--------+--------+
+| IDBACKUP | IDPRODUTO | NOME         | VALOR  | EVENTO |
++----------+-----------+--------------+--------+--------+
+|        1 |         1 | LIVRO PYTHON | 300.00 | INSERT |
+|        2 |         2 | LIVRO  SQL   | 450.00 | INSERT |
++----------+-----------+--------------+--------+--------+
